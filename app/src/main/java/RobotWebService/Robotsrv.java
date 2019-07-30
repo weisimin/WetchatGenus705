@@ -12,6 +12,7 @@ package RobotWebService;
 
 import org.ksoap2.SoapEnvelope;
 
+import org.ksoap2.SoapFault;
 import org.ksoap2.serialization.MarshalBase64;
 import org.ksoap2.serialization.SoapObject;
 
@@ -23,7 +24,8 @@ import java.net.PortUnreachableException;
 
 public class Robotsrv {
     public  static  String Jusrpar="";
-    public  static  String WebServiceUrl="http://103.117.138.220/WEBSERVICE.ASMX";
+
+    public  static  String WebServiceUrl="http://192.168.5.230/WEBSERVICE.ASMX";
 public static String UserLogin(String UserName,String Password)
 {
     SoapObject request = new SoapObject("http://13828081978.zicp.vip/","UserLogInUsrpar");
@@ -39,6 +41,11 @@ public static String UserLogin(String UserName,String Password)
     try
     {
         ht.call("http://13828081978.zicp.vip/UserLogInUsrpar",envelope);
+        if (envelope.bodyIn.getClass()== SoapFault.class)
+        {
+            SoapFault res = (SoapFault) envelope.bodyIn;
+            return  "错误:"+res.getMessage();
+        }
         SoapObject res = (SoapObject) envelope.bodyIn;
         Jusrpar=  res.getProperty("UserLogInUsrparResult").toString();
         return  Jusrpar;

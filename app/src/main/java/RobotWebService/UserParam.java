@@ -10,6 +10,14 @@
 
 package RobotWebService;
 
+import android.os.Environment;
+
+import androidx.versionedparcelable.ParcelUtils;
+
+import com.alibaba.fastjson.JSON;
+
+import net.dalu2048.wechatgenius.DBData;
+
 import java.util.UUID;
 
 public class UserParam {
@@ -28,4 +36,24 @@ public class UserParam {
     public static String MemberSourceode="";
 
     public aspnet_UsersNewGameResultSend Membersetting =null;
+
+    public static UserParam RefreshUserparamBuf()
+    {
+        UserParam bufs=GetUserparamBuf();
+        String Jusrpar=  Robotsrv.UserLogin(bufs.UserName,bufs.Password);
+        Robotsrv.Jusrpar=Jusrpar;
+        String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
+        DBData.writeFileData(Path, Robotsrv.Jusrpar);
+        return  GetUserparamBuf();
+    }
+
+    public static UserParam GetUserparamBuf()
+    {
+        UserParam param=null;
+        String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
+        String JSon= DBData.readFileData(Path);
+        param= (UserParam)JSON.parse(JSon);
+        return  param;
+    }
+
 }

@@ -13,11 +13,15 @@ package net.dalu2048.wechatgenius;
 import android.database.Cursor;
 
 import android.util.Base64;
+import android.view.ViewDebug;
 
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.security.PublicKey;
@@ -27,6 +31,8 @@ import java.util.ArrayList;
 
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
+
+import static android.content.Context.MODE_PRIVATE;
 
 public class DBData {
     public  DBData(byte[] _Passwords ,Object _SqlLiteContainer,String _DbPath,Object _Dat_SQLiteCipherSpec)
@@ -49,10 +55,10 @@ public class DBData {
     public  Class<?> Typ_SQLiteCursor=null;
     public  Method mtd_RawQuery=null;
 
-    public static ArrayList<DBData> Finddbs= new  ArrayList();
+    public static ArrayList<DBData> Finddbs= new  ArrayList<DBData>();
 
     public  static void   JoinDBPath(DBData newdb ){
-       // XposedBridge.log(newdb.DbPath);
+        //XposedBridge.log("队列长度" +String.valueOf(Finddbs.size()));
         if (newdb.Passwords!=null) {
            // XposedBridge.log("pwd:" + Base64.encodeToString(newdb.Passwords,Base64.NO_WRAP));
         }
@@ -71,8 +77,9 @@ public class DBData {
 
     public  static DBData Finddb(String DatabaseName)
     {
+
         for (int i=0;i<Finddbs.size();i++ ) {
-            if (Finddbs.get(i).DbPath.contains(DatabaseName)  )
+            if (Finddbs.get(i).DbPath.toUpperCase().contains(DatabaseName.toUpperCase())  )
             {
                 return  Finddbs.get(i);
 
@@ -87,7 +94,7 @@ public class DBData {
         DBData torun= Finddb(DBName);
         if (torun==null)
         {
-            return "";
+            return "找不到数据库"+DBName;
 
         }
         //String Sql="select name from sqlite_master where type='table' order by name";
@@ -135,6 +142,7 @@ public class DBData {
                             case Cursor.FIELD_TYPE_STRING : row.put(colName, crs.getString(i))         ; break;
                         }
                     } catch (JSONException e) {
+                        //PrintTrack();
                     }
                 }
             }
@@ -211,6 +219,38 @@ public class DBData {
 
 
     }//fun end
+    //文件写入
+    public static void writeFileData(String filename, String content){
+        try {
+
+            FileOutputStream fos =new FileOutputStream(filename,false);//获得FileOutputStream
+            //将要写入的字符串转换为byte数组
+            byte[]  bytes = content.getBytes();
+            fos.write(bytes);//将byte数组写入文件
+            fos.close();//关闭文件输出流
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    //文件读取
+    public static String readFileData(String fileName){
+        String result="";
+        try{
+            FileInputStream fis = new FileInputStream(fileName);
+            //获取文件长度
+            int lenght = fis.available();
+            byte[] buffer = new byte[lenght];
+            fis.read(buffer);
+            //将byte数组转换成指定格式的字符串
+            result = new String(buffer, "UTF-8");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return  result;
+    }
         }//class end
 
 

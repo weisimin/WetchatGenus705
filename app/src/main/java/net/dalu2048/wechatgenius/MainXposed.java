@@ -10,13 +10,21 @@
 
 package net.dalu2048.wechatgenius;
 
+import android.app.Notification;
+import android.app.PendingIntent;
 import android.content.ContentValues;
 
+import android.content.Context;
 import android.content.RestrictionEntry;
 import android.database.Cursor;
+import android.os.Environment;
+import android.os.Looper;
 import android.util.Base64;
 
 
+import net.dalu2048.wechatgenius.ui.AboutActivity;
+import net.dalu2048.wechatgenius.ui.user.LoginActivity;
+import net.dalu2048.wechatgenius.util.RegexUtils;
 import net.dalu2048.wechatgenius.xposed.WechatUtils;
 
 import java.lang.reflect.Array;
@@ -28,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import RobotWebService.UserParam;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.XC_MethodReplacement;
@@ -40,6 +49,12 @@ import android.content.Intent;
 import java.util.LinkedList;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+import android.app.Activity;
+import android.widget.EditText;
+import android.widget.Toast;
+
+import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
+
 import static de.robv.android.xposed.XposedBridge.getXposedVersion;
 import static de.robv.android.xposed.XposedBridge.invokeOriginalMethod;
 
@@ -74,11 +89,13 @@ public final class MainXposed implements IXposedHookLoadPackage {
         if (!lpparam.processName.equals(WECHAT_PROCESS_NAME)) {
             return;
         }
+        Robotsrv.Jusrpar=DBData.readFileData(  Environment.getExternalStorageDirectory()+"/app.dat");
         // XposedBridge.log("进入微信进程：" + lpparam.processName);
         //调用 hook数据库插入。
         hookDatabaseInsert(lpparam);
         //abstract可能勾不住
         //openhelperhook(lpparam);
+
     }
 
 
@@ -164,6 +181,20 @@ public final class MainXposed implements IXposedHookLoadPackage {
                             }
                         }
 
+                        if (strContent.startsWith("加")&&isSend==1)
+                        {
+                            String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark  from rcontact ");
+                            String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar);
+
+
+                        }
+                        if (strContent.startsWith("刷新会员")&&isSend==1)
+                        {
+
+                             UserParam.RefreshUserparamBuf();
+
+
+                        }
                     }
                 });//find hook end
 // public static SQLiteDatabase openDatabase(String paramString, byte[] paramArrayOfByte, SQLiteCipherSpec paramSQLiteCipherSpec, CursorFactory paramCursorFactory, int paramInt, DatabaseErrorHandler paramDatabaseErrorHandler)
@@ -330,6 +361,7 @@ public final class MainXposed implements IXposedHookLoadPackage {
         }
         return stringBuilder.toString();
     }
+
 
 
     //输出插入操作日志

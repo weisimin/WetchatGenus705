@@ -27,6 +27,8 @@ import RobotWebService.Robotsrv;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static net.dalu2048.wechatgenius.DBData.PrintTrack;
+
 public class MainActivity extends Activity {
     @BindView(R.id.topbar) QMUITopBar mTopBar;
     @BindView(R.id.groupListView) QMUIGroupListView mGroupListView;
@@ -103,7 +105,7 @@ public class MainActivity extends Activity {
                 .addItemView(listItemWechatVersion, null)
                 .addTo(mGroupListView);
         //endregion
-        QMUICommonListItemView listItemwechatmember = mGroupListView.createItemView("上传微信通讯录");
+       /* QMUICommonListItemView listItemwechatmember = mGroupListView.createItemView("上传微信通讯录");
         QMUICommonListItemView listItemrefresh = mGroupListView.createItemView("读取发图设置");
         QMUIGroupListView.newSection(this)
                 .setTitle("会员设置")
@@ -131,7 +133,7 @@ public class MainActivity extends Activity {
                         }).start();
                     }
                 })//additemview
-                .addTo(mGroupListView);
+                .addTo(mGroupListView);*/
         //region Xposed框架状态
         //Xposed版本
         QMUICommonListItemView listItemXposed = mGroupListView.createItemView("Xposed版本");
@@ -154,14 +156,18 @@ public class MainActivity extends Activity {
     void  OnClickUpload(View v)
     {
         try {
+            Looper.prepare();
+            Toast.makeText(this, "数据库"+DBData.Finddbs.size(), Toast.LENGTH_LONG).show();
+            Looper.loop();
             String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark  from rcontact ");
             String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar);
             Looper.prepare();
-            Toast.makeText(this, r, Toast.LENGTH_SHORT).show();
+           //Toast.makeText(this, r, Toast.LENGTH_SHORT).show();
             Looper.loop();
         }
         catch(Exception e)
         {
+            //PrintTrack();
             Looper.prepare();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_LONG).show();
             Looper.loop();
@@ -170,7 +176,8 @@ public class MainActivity extends Activity {
     }
     private void onClickRefresh(View view) {
         try {
-        String Loginr= RobotWebService.Robotsrv.UserLogin(LoginActivity.pre_Username,LoginActivity.pre_Password);
+
+        String Loginr= "";//RobotWebService.Robotsrv.UserLogin(LoginActivity.pre_Username,LoginActivity.pre_Password);
         if (Loginr==null)
         {
             Looper.prepare();
@@ -195,6 +202,7 @@ public class MainActivity extends Activity {
         }
         catch(Exception e)
         {
+            //PrintTrack();
             Looper.prepare();
             Toast.makeText(this, e.getMessage(), Toast.LENGTH_SHORT).show();
             Looper.loop();

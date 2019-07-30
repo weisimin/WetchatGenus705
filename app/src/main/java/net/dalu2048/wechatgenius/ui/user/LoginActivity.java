@@ -13,6 +13,7 @@ package net.dalu2048.wechatgenius.ui.user;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Looper;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -25,12 +26,17 @@ import com.qmuiteam.qmui.util.QMUIKeyboardHelper;
 import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 
+import net.dalu2048.wechatgenius.DBData;
 import net.dalu2048.wechatgenius.MainActivity;
 import net.dalu2048.wechatgenius.R;
 import net.dalu2048.wechatgenius.ui.AboutActivity;
 import net.dalu2048.wechatgenius.util.RegexUtils;
 import net.dalu2048.wechatgenius.util.StringUtils;
 
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+
+import RobotWebService.Robotsrv;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -122,8 +128,7 @@ public class LoginActivity extends Activity {
             return;
         }
 
-        pre_Username=strName;
-        pre_Password=strPassword;
+
         String Loginr= RobotWebService.Robotsrv.UserLogin(strName,strPassword);
 if (Loginr==null)
 {
@@ -142,6 +147,8 @@ if      (Loginr.contains("错误"))
     return;
 
 }
+        String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
+        DBData.writeFileData(Path, Robotsrv.Jusrpar);
         Intent intent = new Intent(this, MainActivity.class);
 
         startActivity(intent);
@@ -149,6 +156,7 @@ if      (Loginr.contains("错误"))
         finish();
     }//click end
 
-   public static  String pre_Username="";
-   public static  String pre_Password="";
+
+
+
 }
