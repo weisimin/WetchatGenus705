@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ *************************************************************
+  ~ 文件：activity_sql.xml  模块：app  项目：trunk
+  ~ 当前修改时间：2019年07月19日 08:05:31
+  ~ 上次修改时间：2019年07月19日 08:05:31
+  ~ 作者：大路
+  ~ Copyright (c) 2019
+  ~ *************************************************************
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.SqlActivirty">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
+
+        <EditText
+            android:id="@+id/editText"
+            android:layout_width="395dp"
+            android:layout_height="329dp"
+            android:autofillHints=""
+            android:ems="10"
+            android:gravity="start|top"
+            android:inputType="textMultiLine"
+            tools:text="@string/sql_sql" />
+
+        <Button
+            android:id="@+id/button"
+            android:layout_width="395dp"
+            android:layout_height="wrap_content"
+            tools:text="@android:string/ok" />
+
+        <TextView
+            android:id="@+id/textView"
+            android:layout_width="match_parent"
+            android:layout_height="207dp"
+            tools:text="@string/sql_RESULT" />
+    </LinearLayout>
+
+</android.support.constraint.ConstraintLayout>

@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ~ *************************************************************
+  ~ 文件：activity_user_setting.xml  模块：app  项目：trunk
+  ~ 当前修改时间：2019年07月29日 12:16:09
+  ~ 上次修改时间：2019年07月29日 12:16:09
+  ~ 作者：大路
+  ~ Copyright (c) 2019
+  ~ *************************************************************
+  -->
+
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".ui.UserSetting">
+
+</android.support.constraint.ConstraintLayout>

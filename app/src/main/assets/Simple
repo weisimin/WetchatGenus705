@@ -1,0 +1,235 @@
+       /* Class<?> typ_SendAppMessageWrapperUI = XposedHelpers.findClassIfExists("com.tencent.mm.ui.transmit.SendAppMessageWrapperUI", loadPackageParam.classLoader);
+        XposedHelpers.findAndHookMethod(typ_SendAppMessageWrapperUI,
+                "aR"
+                ,LinkedList.class
+        ,new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                XposedBridge.log("findhook ar"+param.toString());
+            }//hook do end
+        }//hook defind end
+        );//find end*/
+       /* Class<?> typ_SelectConversationUI = XposedHelpers.findClassIfExists("com.tencent.mm.ui.transmit.SelectConversationUI", loadPackageParam.classLoader);
+        Class<?> typ_ga= XposedHelpers.findClassIfExists("com.tencent.mm.pluginsdk.ui.applet.g.a", loadPackageParam.classLoader);
+        if (typ_SelectConversationUI==null) {XposedBridge.log("找不到SelectConversationUI");}
+        XposedHelpers.findAndHookMethod(typ_SelectConversationUI,
+                "Kc"
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        XposedBridge.log("找到数据初始化函数findhook preparecontent"+param.toString());
+
+                        Field fld_Retr_Msg_Type=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"msgType");
+                        Field fld_msgid=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"cpO");
+                        Field fld_imagePath=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"imagePath");
+
+                        Field fld_ad_video_title=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"AAi");
+                        Field fld_desc_title=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"kmS");
+                        Field fld_Msg_thumb_path=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"lsX");
+                        Field fld__Msg_content=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"cDI");
+                        Field fld_fav_xml_str=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"AAj");
+
+                       this.AAi = getIntent().getStringExtra("ad_video_title");
+                        this.kmS = getIntent().getStringExtra("desc_title");
+                        this.lsX = getIntent().getStringExtra("Retr_Msg_thumb_path");
+                        this.cDI = getIntent().getStringExtra("Retr_Msg_content");
+                        this.AAj = getIntent().getStringExtra("Retr_fav_xml_str");
+                        if (fld_Retr_Msg_Type==null){  XposedBridge.log("Retr_Msg_Type找不到");}
+                        if (fld_msgid==null){  XposedBridge.log("msgid");}
+                        if (fld_imagePath==null){  XposedBridge.log("Retr_imagePath找不到");}
+
+                        XposedBridge.log("找到数据初始化数据:Retr_Msg_Type"+fld_Retr_Msg_Type.get(param.thisObject));
+                        XposedBridge.log("找到数据初始化数据msgid"+fld_msgid.get(param.thisObject));
+                        XposedBridge.log("找到数据初始化数据imagePat"+fld_imagePath.get(param.thisObject));
+
+                        XposedBridge.log("找到数据初始化数据Retr_ad_video_title"+fld_ad_video_title.get(param.thisObject));
+                        XposedBridge.log("找到数据初始化数据_desc_title"+fld_desc_title.get(param.thisObject));
+                        XposedBridge.log("找到数据初始化数据Msg_thumb_path"+fld_Msg_thumb_path.get(param.thisObject));
+                        XposedBridge.log("找到数据初始化数据_Msg_content"+fld__Msg_content.get(param.thisObject));
+                        XposedBridge.log("找到数据初始化数据fav_xml_str"+fld_fav_xml_str.get(param.thisObject));
+
+
+                    }//hook do end
+                }//hook defind end
+        );//find hook end*/
+
+        Class<?> typ_wechatlog=XposedHelpers.findClassIfExists("com.tencent.mm.sdk.platformtools.ab", loadPackageParam.classLoader);
+        XposedHelpers.findAndHookMethod(typ_wechatlog,
+                "i"
+                ,String.class,String.class,Object[].class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (param.args[0].toString().toLowerCase().contains("micromsg.msg"))
+                        {
+                       // XposedBridge.log(param.args[0].toString());
+                        //XposedBridge.log(param.args[1].toString());
+
+                            }
+                    }
+                    }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        XposedHelpers.findAndHookMethod(typ_wechatlog,
+                "i"
+                ,String.class,String.class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (param.args[0].toString().toLowerCase().contains("micromsg.msg"))
+                        {
+                        //XposedBridge.log(param.args[0].toString());
+                        //XposedBridge.log(param.args[1].toString());
+                        }
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        XposedHelpers.findAndHookMethod(typ_wechatlog,
+                "d"
+                ,String.class,String.class,Object[].class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (param.args[0].toString().toLowerCase().contains("micromsg.chat")) {
+                           // XposedBridge.log(param.args[0].toString());
+                            //XposedBridge.log(param.args[1].toString());
+                        }
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        XposedHelpers.findAndHookMethod(typ_wechatlog,
+                "d"
+                ,String.class,String.class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (param.args[0].toString().toLowerCase().contains("micromsg.chat"))
+                        {
+                        //XposedBridge.log(param.args[0].toString());
+                        //XposedBridge.log(param.args[1].toString());
+                            }
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        XposedHelpers.findAndHookMethod(typ_wechatlog,
+                "e"
+                ,String.class,String.class,Object[].class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                        if (param.args[0].toString().toLowerCase().contains("micromsg.chat"))
+                        {
+                        //XposedBridge.log(param.args[0].toString());
+                        //XposedBridge.log(param.args[1].toString());
+                        }
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        XposedHelpers.findAndHookMethod(typ_wechatlog,
+                "e"
+                ,String.class,String.class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                        if (param.args[0].toString().toLowerCase().contains("micromsg.chat")) {
+                            //XposedBridge.log(param.args[0].toString());
+                            //XposedBridge.log(param.args[1].toString());
+                        }
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+
+        Class<?> typ_db=XposedHelpers.findClassIfExists("com.tencent.mm.storage.bj", loadPackageParam.classLoader);
+        Class<?> typ_param=XposedHelpers.findClassIfExists("com.tencent.mm.storage.bi", loadPackageParam.classLoader);
+        XposedHelpers.findAndHookMethod(typ_db,
+                "c"
+                ,typ_param,boolean.class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                       // PrintTrack();
+
+
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        Class<?> typ_ai=XposedHelpers.findClassIfExists("com.tencent.mm.ui.chatting.c.ai", loadPackageParam.classLoader);
+        Class<?> typ_runable=XposedHelpers.findClassIfExists("com.tencent.mm.storage.bi", loadPackageParam.classLoader);
+        XposedHelpers.findAndHookMethod(typ_ai,
+                "eQ"
+                ,String.class,int.class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                       /* XposedBridge.log("+++++++++++++++++++++++++++++++++++++++++++++");
+XposedBridge.log(param.args[0].toString());
+                        XposedBridge.log(param.args[1].toString());*/
+                        // PrintTrack();
+
+
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        /*---------------------------------------------------------------------------------------------------------------------------------------------------*/
+        Class<?> typ_h=XposedHelpers.findClassIfExists("com.tencent.mm.modelmulti.h", loadPackageParam.classLoader);
+        XposedHelpers.findAndHookConstructor(typ_h
+        ,String.class,String.class,int.class,int.class,Object.class
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                       // XposedBridge.log("+++++++++++++++++++++++++++++++++++++++++++++");
+                       // XposedBridge.log(ObjectToString(param.args[0]));
+                       // XposedBridge.log(ObjectToString(param.args[1]));
+                       // XposedBridge.log(ObjectToString(param.args[2]));
+                       // XposedBridge.log(ObjectToString(param.args[3]));
+                        // touser,content,1,0
+                        // PrintTrack();
+
+
+                    }
+                }//after hook end
+
+        );//find hook end*/
+        Class<?> typ_y=XposedHelpers.findClassIfExists("com.tencent.mm.ui.chatting.c.y", loadPackageParam.classLoader);
+        Class<?> typ_gparam=XposedHelpers.findClassIfExists("com.tencent.mm.modelmulti.h", loadPackageParam.classLoader);
+        XposedHelpers.findAndHookMethod(typ_y,"g"
+                ,typ_gparam
+                ,new XC_MethodHook() {
+                    @Override
+                    protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+
+                        Field fld_jmg=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"jMG");
+                        Field fld_vwm=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"vWm");
+                                Field fld_fieldusername=XposedHelpers.findFieldIfExists(param.thisObject.getClass(),"cyL");
+                        XposedBridge.log("+++++++++++++++++++++++++++++++++++++++++++++");
+                        XposedBridge.log("jmg :"+ObjectToString(fld_jmg.get(param.thisObject)));
+                        XposedBridge.log("vwm:"+ObjectToString(fld_vwm.get(param.thisObject)));
+                        XposedBridge.log("cyl:"+ObjectToString(fld_fieldusername.get(param.thisObject)));
+                        // touser,content,1,0
+                        // PrintTrack();
+
+
+                    }
+                }//after hook end
+
+        );//find hook end*/
+
+
+
+wsdl2java  -uri http://103.117.138.220/WEBSERVICE.ASMX?WSDL -p client -s -o stub
