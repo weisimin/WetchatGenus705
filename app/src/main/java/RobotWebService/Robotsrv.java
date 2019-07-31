@@ -57,7 +57,7 @@ public static String UserLogin(String UserName,String Password)
 
 }//fun end
 
-    public  static String My_Wechatid="";
+    public  static String My_Wechatid="Unknow";
     public  static  String MessageRobotDo(String RawContent,String WX_SourceType,String UserNameOrRemark,String FromUserNameTEMPID,String ToUserNameTEMPID,String JavaMsgTime,String msgType,Boolean IsTalkGroup,String MyUserTEMPID,String Jusrpar)
     {
         SoapObject request = new SoapObject("http://13828081978.zicp.vip/","MessageRobootDo");
@@ -83,6 +83,11 @@ public static String UserLogin(String UserName,String Password)
         try
         {
             ht.call("http://13828081978.zicp.vip/MessageRobootDo",envelope);
+            if (envelope.bodyIn.getClass()== SoapFault.class)
+            {
+                SoapFault res = (SoapFault) envelope.bodyIn;
+                return  "错误:"+res.getMessage();
+            }
             SoapObject res = (SoapObject) envelope.bodyIn;
 
             return res.getProperty("MessageRobootDo").toString();
@@ -167,13 +172,18 @@ public static String UserLogin(String UserName,String Password)
         try
         {
             ht.call("http://13828081978.zicp.vip/UploadContacts",envelope);
+            if (envelope.bodyIn.getClass()== SoapFault.class)
+            {
+                SoapFault res = (SoapFault) envelope.bodyIn;
+                return  "call获取错误:"+res.toString();
+            }
             SoapObject res = (SoapObject) envelope.bodyIn;
 
             return res.getProperty("UploadContactsResult").toString();
         }
         catch (Exception anyerror)
         {
-            return  "错误:"+anyerror.getMessage();
+            return  "Call之前错误:"+anyerror.toString();
         }
     }
 
