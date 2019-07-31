@@ -36,6 +36,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Objects;
 
+import RobotWebService.ContentProcessRunable;
 import RobotWebService.UserParam;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -49,6 +50,7 @@ import android.content.Intent;
 import java.util.LinkedList;
 
 import static android.icu.lang.UCharacter.GraphemeClusterBreak.T;
+
 import android.app.Activity;
 import android.widget.EditText;
 import android.widget.Toast;
@@ -89,7 +91,7 @@ public final class MainXposed implements IXposedHookLoadPackage {
         if (!lpparam.processName.equals(WECHAT_PROCESS_NAME)) {
             return;
         }
-        Robotsrv.Jusrpar=DBData.readFileData(  Environment.getExternalStorageDirectory()+"/app.dat");
+        Robotsrv.Jusrpar = DBData.readFileData(Environment.getExternalStorageDirectory() + "/app.dat");
         // XposedBridge.log("进入微信进程：" + lpparam.processName);
         //调用 hook数据库插入。
         hookDatabaseInsert(lpparam);
@@ -132,7 +134,7 @@ public final class MainXposed implements IXposedHookLoadPackage {
                         }
                         //过滤掉非聊天消息
                         if (!tableName.equals("message")) {
-                             printInsertLog(tableName, (String) param.args[1], contentValues, (Integer) param.args[3]);
+                            printInsertLog(tableName, (String) param.args[1], contentValues, (Integer) param.args[3]);
                             return;
                         }
                         //打印出日志
@@ -148,53 +150,15 @@ public final class MainXposed implements IXposedHookLoadPackage {
                         //说话人ID
                         String strSayTalker = contentValues.getAsString("talker");
 
-                        String strcreateTime = contentValues.getAsString("createTime");
 
-                        String msgType = contentValues.getAsString("type");
-
-                        if (isSend == 1 && Robotsrv.My_Wechatid == "") {
+                        if (isSend == 1 && Robotsrv.My_Wechatid == "Unknow") {
                             Robotsrv.My_Wechatid = strSayTalker;
                         }
-                        //XposedBridge.log("taleris:"+strTalker);
-                        // XposedBridge.log("content:"+strContent);
-                        //收到消息，进行回复（要判断不是自己发送的、不是群消息、不是公众号消息，才回复）
-                        if (//isSend != 1 && !strSayTalker.endsWith("@chatroom") &&
-                                !strSayTalker.startsWith("gh_")&&Robotsrv.Jusrpar!="") {
-
-                            // XposedBridge.log((DBData.OpenAndQuery("EnMicroMsg","select * from rcontact where username='"+strTalker+"'")));
-                            Cursor cur = DBData.OpenAndQueryCursor("EnMicroMsg", "select username,encryptUsername,nickname, conRemark  from rcontact where username='" + strSayTalker + "'");
-                            cur.moveToFirst();
-                            String encryptUserNmae = cur.getString(1);
-                            String nickname = cur.getString(2);
-                            String conRemark = cur.getString(3);
-                            String talkerid = contentValues.getAsString("talkerid");
-                            cur = DBData.OpenAndQueryCursor("EnMicroMsg", "select rowid,username,encryptUsername,nickname, conRemark  from rcontact where rowid='" + talkerid + "'");
-                            cur.moveToFirst();
-                            String ConversationTalkerusername = cur.getString(1);
-
-                            String ToUserNameTEMPID = isSend == 1 ? ConversationTalkerusername : strSayTalker;
-                            String FromUserNameTEMPID = isSend == 1 ? strSayTalker : ConversationTalkerusername;
-
-                            String Res = Robotsrv.MessageRobotDo(strContent, "安微", (conRemark == null ? nickname : conRemark), FromUserNameTEMPID, ToUserNameTEMPID, strcreateTime, msgType, false, Robotsrv.My_Wechatid, Robotsrv.Jusrpar);
-                            if (Res != "") {
-                                SendWXContentByID(loadPackageParam, strSayTalker, encryptUserNmae, Res);
-                            }
+                        if (strContent.startsWith("*")||strContent.startsWith("错误")) {
+                            return;
                         }
+                        new Thread(new ContentProcessRunable(loadPackageParam, contentValues)).start();
 
-                        if (strContent.startsWith("加")&&isSend==1)
-                        {
-                            String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark  from rcontact ");
-                            String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar);
-
-
-                        }
-                        if (strContent.startsWith("刷新会员")&&isSend==1)
-                        {
-
-                             UserParam.RefreshUserparamBuf();
-
-
-                        }
                     }
                 });//find hook end
 // public static SQLiteDatabase openDatabase(String paramString, byte[] paramArrayOfByte, SQLiteCipherSpec paramSQLiteCipherSpec, CursorFactory paramCursorFactory, int paramInt, DatabaseErrorHandler paramDatabaseErrorHandler)
@@ -260,79 +224,6 @@ public final class MainXposed implements IXposedHookLoadPackage {
     }//fun end
 
 
-    static void SendWXContent(final XC_LoadPackage.LoadPackageParam loadPackageParam, String NickNameOrConRemark, String Content) {
-
-        Cursor mCursor = DBData.OpenAndQueryCursor("EnMicroMsg"
-                , "select username,encryptUsername,nickname,conRemark from rcontact where nickname = '" + NickNameOrConRemark.replace("'", "''") + "' or conReamrk = '" + NickNameOrConRemark.replace("'", "''") + "'"
-        );
-
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-            do {
-                String Username = mCursor.getString(0);
-                String EncryptUserName = mCursor.getString(1);
-                SendWXContentByID(loadPackageParam, Username, EncryptUserName, Content);
-
-            } while (mCursor.moveToNext());
-        }// cursor if
-// touser,content,1,0
-    }
-
-    static void SendWXContentByID(final XC_LoadPackage.LoadPackageParam loadPackageParam, String UserName, String EncryptUserName, String Content) {
-        Class<?> typ_h = XposedHelpers.findClassIfExists("com.tencent.mm.modelmulti.h", loadPackageParam.classLoader);
-
-        //touser,content,1,0
-        Object newh = XposedHelpers.newInstance(typ_h, new Class[]{String.class, String.class, int.class, int.class, Object.class}, UserName, Content, 1, 0, null);
-
-        Class<?> typ_y = XposedHelpers.findClassIfExists("com.tencent.mm.ui.chatting.c.y", loadPackageParam.classLoader);
-        Object yinstacne = XposedHelpers.newInstance(typ_y, new Class[]{}, new Object[]{});
-        Field cyl = XposedHelpers.findField(typ_y, "cyL");
-        try {
-            cyl.set(yinstacne, EncryptUserName);
-        } catch (Exception e) {
-            XposedBridge.log("写入encryid失败");
-        }
-        Method mtd_g = XposedHelpers.findMethodExactIfExists(typ_y, "g", typ_h);
-        try {
-            mtd_g.invoke(yinstacne, newh);
-        } catch (Exception e) {
-            XposedBridge.log("执行y方法失败");
-        }
-        Class<?> typ_aw = XposedHelpers.findClassIfExists("com.tencent.mm.model.aw", loadPackageParam.classLoader);
-        Method mtd_RC = XposedHelpers.findMethodExactIfExists(typ_aw, "Rc");
-        Class<?> typ_p = XposedHelpers.findClassIfExists("com.tencent.mm.ai.p", loadPackageParam.classLoader);
-        Class<?> typ_m = XposedHelpers.findClassIfExists("com.tencent.mm.ai.m", loadPackageParam.classLoader);
-
-        Method mtd_a = XposedHelpers.findMethodExactIfExists(typ_p, "a", typ_m, int.class);
-
-        if (mtd_RC == null) {
-            XposedBridge.log("找不到mtd_RC方法");
-            return;
-        }
-        if (mtd_a == null) {
-            XposedBridge.log("找不到mtd_a方法");
-            return;
-        }
-
-        Object InstanceP = null;
-
-        try {
-            InstanceP = mtd_RC.invoke(null, new Object[]{});
-            if (InstanceP == null) {
-                XposedBridge.log("实例aw.Rc()返回空白");
-                return;
-            }
-        } catch (Exception e) {
-            XposedBridge.log("执行mtd_RC方法失败" + e.getMessage());
-        }
-        try {
-            mtd_a.invoke(InstanceP, new Object[]{newh, 0});
-        } catch (Exception e) {
-            XposedBridge.log("执行mtd_a方法失败" + e.getMessage());
-        }
-        //aw.Rc().a((m)h, 0);
-    }
-
     static String ObjectToString(Object param) {
         if (param == null) {
             return "null";
@@ -361,7 +252,6 @@ public final class MainXposed implements IXposedHookLoadPackage {
         }
         return stringBuilder.toString();
     }
-
 
 
     //输出插入操作日志

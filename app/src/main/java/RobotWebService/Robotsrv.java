@@ -156,13 +156,14 @@ public static String UserLogin(String UserName,String Password)
         return  "功能未完成";
 
     }
-    public  static  String UploadContacts(String Jcontacts,String Jusrpar)
+    public  static  String UploadContacts(String Jcontacts,String Jusrpar,String WX_SourceType)
     {
 
         SoapObject request = new SoapObject("http://13828081978.zicp.vip/","UploadContacts");
 
         request.addProperty("Jcontacts",Jcontacts);
         request.addProperty("Jusrpar",Jusrpar);
+        request.addProperty("WX_SourceType","安微");
         SoapSerializationEnvelope envelope =new  SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.bodyOut = request;
         envelope.dotNet=true;

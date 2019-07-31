@@ -111,7 +111,7 @@ public class ContentProcessRunable implements Runnable{
 
                 UserParam.RefreshUserparamBuf();
             }
-            String  Res = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar);
+            String  Res = "*"+Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar,"安微");
             SendWXContentByID(loadPackageParam, ConversationTalkerusername, Conversationenencryptusername, Res);
         }
         if (strContent.equals("刷新会员") && isSend == 1) {

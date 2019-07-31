@@ -160,7 +160,7 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "数据库"+DBData.Finddbs.size(), Toast.LENGTH_LONG).show();
             Looper.loop();
             String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark  from rcontact ");
-            String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar);
+            String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar,"安微");
             Looper.prepare();
            //Toast.makeText(this, r, Toast.LENGTH_SHORT).show();
             Looper.loop();
