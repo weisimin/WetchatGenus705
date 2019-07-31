@@ -22,107 +22,139 @@ import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
-public class ContentProcessRunable implements Runnable{
+public class ContentProcessRunable implements Runnable {
+
     public String ToUserNameTEMPID = "";
     public String FromUserNameTEMPID = "";
 
+    public String ToPlayerName = "";
+    public String FromPlayerName = "";
+
     public String ToencryptUserName = "";
-    public String FromencryptUserName ="";
+    public String FromencryptUserName = "";
 
-    String ConversationTalkerusername = "";
-    String Conversationenencryptusername = "";
 
-    public ContentValues contentValues=null;
 
-    public String strcreateTime="";
+    public String SayencryptUserNmae = "";
 
-    public String strContent="";
 
-    public  int isSend=0;
 
-   public  XC_LoadPackage.LoadPackageParam loadPackageParam=null;
+    public ContentValues contentValues = null;
 
-   public String conRemark="";
-   public String nickname="";
-   public  String strSayTalker="";
+    public String strcreateTime = "";
 
-   public  String msgType="";
+    public String strContent = "";
 
-    public  ContentProcessRunable(XC_LoadPackage.LoadPackageParam _loadPackageParam,ContentValues _contentValues)
-    {
+    public int isSend = 0;
+
+    public XC_LoadPackage.LoadPackageParam loadPackageParam = null;
+
+    public String SayconRemark = "";
+    public String Saynickname = "";
+    public String SayTalker = "";
+    public String SayPlayerName = "";
+
+    public String msgType = "";
+
+    public String ConversationNickName = "";
+    public String ConversationConRemark = "";
+
+    public ContentProcessRunable(XC_LoadPackage.LoadPackageParam _loadPackageParam, ContentValues _contentValues) {
         super();
-        loadPackageParam=_loadPackageParam;
-        contentValues=_contentValues;
+        loadPackageParam = _loadPackageParam;
+        contentValues = _contentValues;
         //提取消息内容
         //1：表示是自己发送的消息
-         isSend = contentValues.getAsInteger("isSend");
+        isSend = contentValues.getAsInteger("isSend");
         //消息内容
-         strContent = contentValues.getAsString("content");
+        strContent = contentValues.getAsString("content");
         //XposedBridge.log("收到消息："+strContent);
         // PrintTrack();
         //说话人ID
-         strSayTalker = contentValues.getAsString("talker");
+        SayTalker = contentValues.getAsString("talker");
 
-         strcreateTime = contentValues.getAsString("createTime");
+        strcreateTime = contentValues.getAsString("createTime");
 
-         msgType = contentValues.getAsString("type");
+        msgType = contentValues.getAsString("type");
 
         //XposedBridge.log("taleris:"+strTalker);
         // XposedBridge.log("content:"+strContent);
         //收到消息，进行回复（要判断不是自己发送的、不是群消息、不是公众号消息，才回复）
 
         // XposedBridge.log((DBData.OpenAndQuery("EnMicroMsg","select * from rcontact where username='"+strTalker+"'")));
-        Cursor cur = DBData.OpenAndQueryCursor("EnMicroMsg", "select username,encryptUsername,nickname, conRemark  from rcontact where username='" + strSayTalker + "'");
+        Cursor cur = DBData.OpenAndQueryCursor("EnMicroMsg", "select username,encryptUsername,nickname, conRemark  from rcontact where username='" + SayTalker + "'");
         cur.moveToFirst();
-        String StrSayencryptUserNmae = cur.getString(1);
-         nickname = cur.getString(2);
-         conRemark = cur.getString(3);
-        String talkerid = contentValues.getAsString("talkerId");
-        cur = DBData.OpenAndQueryCursor("EnMicroMsg", "select rowid,username,encryptUsername,nickname, conRemark  from rcontact where rowid='" + talkerid + "'");
-        cur.moveToFirst();
-        String ConversationTalkerusername = cur.getString(1);
-        String Conversationenencryptusername = cur.getString(2);
+        SayencryptUserNmae = cur.getString(1);
+        Saynickname = cur.getString(2);
+        SayconRemark = cur.getString(3);
+        SayPlayerName=(SayconRemark == null || SayconRemark .equals( "") ? Saynickname : SayconRemark);
 
-         ToUserNameTEMPID = isSend == 1 ? ConversationTalkerusername : Robotsrv.My_Wechatid;
-         FromUserNameTEMPID = isSend == 1 ? Robotsrv.My_Wechatid : ConversationTalkerusername;
 
-         ToencryptUserName = isSend == 1 ? Conversationenencryptusername : StrSayencryptUserNmae;
-         FromencryptUserName = isSend == 1 ? StrSayencryptUserNmae : Conversationenencryptusername;
+
+       /* XposedBridge.log("ConversationTalkerusername:" + ConversationTalkerusername
+                + "Conversationenencryptusername:" + Conversationenencryptusername
+                + "ConversationNickName:" + ConversationNickName
+                + "ConversationConRemark:" + ConversationConRemark
+
+        );*/
+
+
+        ToUserNameTEMPID = isSend == 1 ? SayTalker : Robotsrv.My_Wechatid;
+        FromUserNameTEMPID = isSend == 1 ? Robotsrv.My_Wechatid : SayTalker;
+
+        ToencryptUserName = isSend == 1 ? SayencryptUserNmae : Robotsrv.My_Wechatencryptname;
+        FromencryptUserName = isSend == 1 ? Robotsrv.My_Wechatencryptname : SayencryptUserNmae;
+
+        ToPlayerName = isSend == 1 ? SayPlayerName : Robotsrv.My_Wechatid;
+        FromPlayerName = isSend == 1 ? Robotsrv.My_Wechatid : SayPlayerName;
+
+
+        XposedBridge.log("My_Wechatid:" + Robotsrv.My_Wechatid + "SayPlayerName:" + SayPlayerName);
+
     }
 
     @Override
-    public  void  run()
-    {
-        if (//isSend != 1
-            //&& !strSayTalker.endsWith("@chatroom") &&
-                !strSayTalker.startsWith("gh_") && Robotsrv.Jusrpar != ""
-        ) {
-
-
-            String Res = Robotsrv.MessageRobotDo(strContent, "安微", (conRemark == null ? nickname : conRemark), FromUserNameTEMPID, ToUserNameTEMPID, strcreateTime, msgType, false, Robotsrv.My_Wechatid, Robotsrv.Jusrpar);
-            if (Res != "") {
-                SendWXContentByID(loadPackageParam, strSayTalker, Conversationenencryptusername, Res);
-            }
+    public void run() {
+        if (Robotsrv.My_Wechatid.equals("My_Wechatid")) {
+            SendWXContentByID(loadPackageParam, SayPlayerName, SayencryptUserNmae, "*机器人启动");
+            return;
         }
-
         if (strContent.equals("加") && isSend == 1) {
-            String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark  from rcontact ");
-            if (Robotsrv.Jusrpar == "") {
+            String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark ,type from rcontact ");
+            if (Robotsrv.Jusrpar.equals("")) {
 
                 UserParam.RefreshUserparamBuf();
             }
-            String  Res = "*"+Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar,"安微");
-            SendWXContentByID(loadPackageParam, ConversationTalkerusername, Conversationenencryptusername, Res);
+            String Res = "*" + Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar, "安微");
+            //XposedBridge.log("回复"+ConversationTalkerusername+"加密"+Conversationenencryptusername);
+            SendWXContentByID(loadPackageParam, SayPlayerName, SayencryptUserNmae, Res);
+            return;
         }
-        if (strContent.equals("刷新会员") && isSend == 1) {
-
+        if (strContent.equals("刷新设置") && isSend == 1) {
             UserParam.RefreshUserparamBuf();
+            return;
+        }
+        if (//isSend != 1
+            //&& !strSayTalker.endsWith("@chatroom") &&
+                !SayTalker.startsWith("gh_") && Robotsrv.Jusrpar != ""
+        ) {
+            String Res = "*" + Robotsrv.MessageRobotDo(strContent, "安微", (SayconRemark == null || SayconRemark .equals( "" )? Saynickname : SayconRemark)
+                    , FromPlayerName
+                    , ToPlayerName, strcreateTime, msgType
+                    , false, Robotsrv.My_Wechatid, Robotsrv.Jusrpar
+            );
+            if (Res != "") {
+                SendWXContentByID(loadPackageParam, SayTalker, SayencryptUserNmae, Res);
+            }
 
         }
+
+
 
 
     }//run end
-    static void SendWXContentByID(final XC_LoadPackage.LoadPackageParam loadPackageParam, String UserName, String EncryptUserName, String Content) {
+
+    public static void SendWXContentByID(final XC_LoadPackage.LoadPackageParam loadPackageParam, String UserName, String EncryptUserName, String Content) {
 
 
         Class<?> typ_h = XposedHelpers.findClassIfExists("com.tencent.mm.modelmulti.h", loadPackageParam.classLoader);
@@ -178,7 +210,8 @@ public class ContentProcessRunable implements Runnable{
         }
         //aw.Rc().a((m)h, 0);
     }//fun end
-    static void SendWXContent(final XC_LoadPackage.LoadPackageParam loadPackageParam, String NickNameOrConRemark, String Content) {
+
+    public static void SendWXContent(final XC_LoadPackage.LoadPackageParam loadPackageParam, String NickNameOrConRemark, String Content) {
 
         Cursor mCursor = DBData.OpenAndQueryCursor("EnMicroMsg"
                 , "select username,encryptUsername,nickname,conRemark from rcontact where nickname = '" + NickNameOrConRemark.replace("'", "''") + "' or conReamrk = '" + NickNameOrConRemark.replace("'", "''") + "'"

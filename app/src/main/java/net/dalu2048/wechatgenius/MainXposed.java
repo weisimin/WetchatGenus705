@@ -134,11 +134,11 @@ public final class MainXposed implements IXposedHookLoadPackage {
                         }
                         //过滤掉非聊天消息
                         if (!tableName.equals("message")) {
-                            printInsertLog(tableName, (String) param.args[1], contentValues, (Integer) param.args[3]);
+                            //printInsertLog(tableName, (String) param.args[1], contentValues, (Integer) param.args[3]);
                             return;
                         }
                         //打印出日志
-                        printInsertLog(tableName, (String) param.args[1], contentValues, (Integer) param.args[3]);
+                        //printInsertLog(tableName, (String) param.args[1], contentValues, (Integer) param.args[3]);
 
                         //提取消息内容
                         //1：表示是自己发送的消息
@@ -150,13 +150,26 @@ public final class MainXposed implements IXposedHookLoadPackage {
                         //说话人ID
                         String strSayTalker = contentValues.getAsString("talker");
 
+                        if ( Robotsrv.My_Wechatid.equals("My_Wechatid")) {
+                            Cursor cur = DBData.OpenAndQueryCursor("EnMicroMsg", "select username,encryptUsername,nickname, conRemark  from rcontact where type='1'");
+                            cur.moveToFirst();
 
-                        if (isSend == 1 && Robotsrv.My_Wechatid == "Unknow") {
-                            Robotsrv.My_Wechatid = strSayTalker;
+                            String SayTalker= cur.getString(0);
+                            String SayencryptUserNmae = cur.getString(1);
+                            String Saynickname = cur.getString(2);
+                            String SayconRemark = cur.getString(3);
+                            String SayPlayerName=(SayconRemark == null || SayconRemark .equals( "") ? Saynickname : SayconRemark);
+
+                            Robotsrv.My_Wechatid = SayTalker;
+                            Robotsrv.My_Wechatencryptname = SayencryptUserNmae;
+                            Robotsrv.My_playername = (SayconRemark == null || SayconRemark .equals( "") ? Saynickname : SayconRemark);
+
                         }
-                        if (strContent.startsWith("*")||strContent.startsWith("错误")) {
+
+                        if ((strContent.startsWith("*") || strContent.startsWith("错误")) && Robotsrv.My_Wechatid != "My_Wechatid") {
                             return;
                         }
+
                         new Thread(new ContentProcessRunable(loadPackageParam, contentValues)).start();
 
                     }
