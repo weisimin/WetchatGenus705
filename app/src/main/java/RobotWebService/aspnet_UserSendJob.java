@@ -13,17 +13,17 @@ package RobotWebService;
 import java.util.UUID;
 
 public class aspnet_UserSendJob {
-    private int Joibid;
+    public int Joibid;
 
-    private UUID aspnet_Userid;
+    public UUID aspnet_Userid;
 
-    private String WechatID;
+    public String WechatID;
 
-    private String WX_UserName;
+    public String WX_UserName;
 
-    private String Remark;
+    public String Remark;
 
-    private String ToSendMessage;
+    public String ToSendMessage;
 
-    private String Status;
+    public String Status;
 }

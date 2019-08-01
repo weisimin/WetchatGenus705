@@ -109,7 +109,7 @@ public class ContentProcessRunable implements Runnable {
         FromPlayerName = isSend == 1 ? Robotsrv.My_Wechatid : SayPlayerName;
 
 
-        XposedBridge.log("My_Wechatid:" + Robotsrv.My_Wechatid + "SayPlayerName:" + SayPlayerName);
+       // XposedBridge.log("My_Wechatid:" + Robotsrv.My_Wechatid + "SayPlayerName:" + SayPlayerName);
 
     }
 

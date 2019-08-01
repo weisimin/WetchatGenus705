@@ -21,6 +21,7 @@ import org.ksoap2.serialization.SoapSerializationEnvelope;
 import org.ksoap2.transport.HttpTransportSE;
 
 import java.net.PortUnreachableException;
+import java.util.UUID;
 
 import de.robv.android.xposed.XposedBridge;
 
@@ -158,7 +159,7 @@ public class Robotsrv {
 
         request.addProperty("Jcontacts", Jcontacts);
         request.addProperty("Jusrpar", Jusrpar);
-        request.addProperty("WX_SourceType", "安微");
+        request.addProperty("WX_SourceType", WX_SourceType);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.bodyOut = request;
         envelope.dotNet = true;
@@ -177,7 +178,61 @@ public class Robotsrv {
         } catch (Exception anyerror) {
             return "UploadContacts_Call之前错误:" + anyerror.toString();
         }
-    }
+    }//fun end
 
+    public static String GetSendJobs(String WX_Sourcetype, String Jusrpar) {
+
+        SoapObject request = new SoapObject("http://13828081978.zicp.vip/", "GetSendJobs");
+
+        request.addProperty("WX_Sourcetype", "安微");
+        request.addProperty("Jusrpar", Jusrpar);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.bodyOut = request;
+        envelope.dotNet = true;
+        (new MarshalBase64()).register(envelope);
+        HttpTransportSE ht = new HttpTransportSE(WebServiceUrl, 60000);
+
+        try {
+            ht.call("http://13828081978.zicp.vip/GetSendJobs", envelope);
+            if (envelope.bodyIn.getClass() == SoapFault.class) {
+                SoapFault res = (SoapFault) envelope.bodyIn;
+                return "GetSendJobs call获取错误:" + res.toString();
+            }
+            SoapObject res = (SoapObject) envelope.bodyIn;
+
+            return res.getProperty("GetSendJobsResult").toString();
+        } catch (Exception anyerror) {
+            return "GetSendJobs Call之前错误:" + anyerror.toString();
+        }
+    }//fun end
+
+    public static String UpdateSendJobs(String WX_Sourcetype, UUID Userid, int Jobid) {
+
+        SoapObject request = new SoapObject("http://13828081978.zicp.vip/", "UpdateSendJobs");
+
+        request.addProperty("WX_Sourcetype", WX_Sourcetype);
+        request.addProperty("Userid", Userid);
+        request.addProperty("Jobid", Jobid);
+        SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
+        envelope.bodyOut = request;
+        envelope.dotNet = true;
+        (new MarshalBase64()).register(envelope);
+        HttpTransportSE ht = new HttpTransportSE(WebServiceUrl, 60000);
+
+        try {
+            ht.call("http://13828081978.zicp.vip/UpdateSendJobs", envelope);
+            if (envelope.bodyIn.getClass() == SoapFault.class) {
+                SoapFault res = (SoapFault) envelope.bodyIn;
+                return "UpdateSendJobs call获取错误:" + res.toString();
+            }
+            SoapObject res = (SoapObject) envelope.bodyIn;
+
+            return res.getProperty("UpdateSendJobsResult").toString();
+        } catch (Exception anyerror) {
+            return "UpdateSendJobs Call之前错误:" + anyerror.toString();
+        }
+    }//fun end
+
+    public static   Thread Thread_GetJendJob=null;
 
 }//class end

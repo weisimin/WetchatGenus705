@@ -37,6 +37,7 @@ import java.util.HashMap;
 import java.util.Objects;
 
 import RobotWebService.ContentProcessRunable;
+import RobotWebService.ThreadSendJobRunable;
 import RobotWebService.UserParam;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.XC_MethodHook;
@@ -164,6 +165,11 @@ public final class MainXposed implements IXposedHookLoadPackage {
                             Robotsrv.My_Wechatencryptname = SayencryptUserNmae;
                             Robotsrv.My_playername = (SayconRemark == null || SayconRemark .equals( "") ? Saynickname : SayconRemark);
 
+                        }
+                        if (Robotsrv.Thread_GetJendJob==null)
+                        {
+                            Robotsrv.Thread_GetJendJob = new Thread(new ThreadSendJobRunable(loadPackageParam));
+                            Robotsrv.Thread_GetJendJob.start();
                         }
 
                         if ((strContent.startsWith("*") || strContent.startsWith("错误")) && Robotsrv.My_Wechatid != "My_Wechatid") {
