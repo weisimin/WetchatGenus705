@@ -37,6 +37,7 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 
 import RobotWebService.Robotsrv;
+import RobotWebService.UserParam;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -57,7 +58,17 @@ public class LoginActivity extends Activity {
         initTopBar();
         //设置view
         setContentView(root);
+        try
+        {
+            UserParam.GetUserparamBuf();
+            Intent intent = new Intent(this, MainActivity.class);
+            startActivity(intent);
+        }
+        catch  (Exception e)
+        {
 
+
+        }
     }
 
     //初始化状态栏

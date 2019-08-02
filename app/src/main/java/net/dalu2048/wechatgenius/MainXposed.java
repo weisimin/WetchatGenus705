@@ -164,6 +164,15 @@ public final class MainXposed implements IXposedHookLoadPackage {
                             Robotsrv.My_Wechatid = SayTalker;
                             Robotsrv.My_Wechatencryptname = SayencryptUserNmae;
                             Robotsrv.My_playername = (SayconRemark == null || SayconRemark .equals( "") ? Saynickname : SayconRemark);
+                            try
+                            {
+                                UserParam.GetUserparamBuf();
+                            }
+                            catch  (Exception e)
+                            {
+
+
+                            }
 
                         }
                         if (Robotsrv.Thread_GetJendJob==null)

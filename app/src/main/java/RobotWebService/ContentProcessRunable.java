@@ -137,13 +137,14 @@ public class ContentProcessRunable implements Runnable {
         if (//isSend != 1
             //&& !strSayTalker.endsWith("@chatroom") &&
                 !SayTalker.startsWith("gh_") && Robotsrv.Jusrpar != ""
+                &&strContent.startsWith("*")==false
         ) {
             String Res = "*" + Robotsrv.MessageRobotDo(strContent, "安微", (SayconRemark == null || SayconRemark .equals( "" )? Saynickname : SayconRemark)
                     , FromPlayerName
                     , ToPlayerName, strcreateTime, msgType
                     , false, Robotsrv.My_Wechatid, Robotsrv.Jusrpar
             );
-            if (Res != "") {
+            if (Res .equals( "*")==false) {
                 SendWXContentByID(loadPackageParam, SayTalker, SayencryptUserNmae, Res);
             }
 

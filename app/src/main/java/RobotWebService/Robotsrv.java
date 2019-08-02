@@ -28,7 +28,7 @@ import de.robv.android.xposed.XposedBridge;
 public class Robotsrv {
     public static String Jusrpar = "";
 
-    public static String WebServiceUrl = "http://192.168.5.230/WEBSERVICE.ASMX";
+    public static String WebServiceUrl ="http://103.117.138.220/WEBSERVICE.ASMX"; //;"http://192.168.5.230/WEBSERVICE.ASMX";
 
     public static String UserLogin(String UserName, String Password) {
         SoapObject request = new SoapObject("http://13828081978.zicp.vip/", "UserLogInUsrpar");
@@ -211,14 +211,14 @@ public class Robotsrv {
         SoapObject request = new SoapObject("http://13828081978.zicp.vip/", "UpdateSendJobs");
 
         request.addProperty("WX_Sourcetype", WX_Sourcetype);
-        request.addProperty("Userid", Userid);
+        request.addProperty("Userid", Userid.toString());
         request.addProperty("Jobid", Jobid);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.bodyOut = request;
         envelope.dotNet = true;
         (new MarshalBase64()).register(envelope);
         HttpTransportSE ht = new HttpTransportSE(WebServiceUrl, 60000);
-
+//XposedBridge.log("WX_Sourcetype:"+WX_Sourcetype+"Userid:"+Userid+"Jobid:"+Jobid);
         try {
             ht.call("http://13828081978.zicp.vip/UpdateSendJobs", envelope);
             if (envelope.bodyIn.getClass() == SoapFault.class) {

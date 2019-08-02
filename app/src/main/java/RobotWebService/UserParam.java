@@ -52,7 +52,7 @@ public class UserParam {
         UserParam param=null;
         String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
         String JSon= DBData.readFileData(Path);
-        param= (UserParam)JSON.parse(JSon);
+        param= JSON.parseObject(JSon,UserParam.class);
         return  param;
     }
 
