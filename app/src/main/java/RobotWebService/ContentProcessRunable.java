@@ -121,28 +121,28 @@ public class ContentProcessRunable implements Runnable {
         }
         if (strContent.equals("加") && isSend == 1) {
             String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark ,type from rcontact ");
-            if (Robotsrv.Jusrpar.equals("")) {
+            if (Robotsrv.Jusrpar().equals("")) {
 
                 UserParam.RefreshUserparamBuf();
             }
-            String Res = "*" + Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar, "安微");
+            String Res = "*" + Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar(), "安微");
             //XposedBridge.log("回复"+ConversationTalkerusername+"加密"+Conversationenencryptusername);
-            SendWXContentByID(loadPackageParam, SayPlayerName, SayencryptUserNmae, Res);
+            SendWXContentByID(loadPackageParam, SayTalker, SayencryptUserNmae, Res);
             return;
         }
-        if (strContent.equals("刷新设置") && isSend == 1) {
+        if (strContent.equals("刷新会员") && isSend == 1) {
             UserParam.RefreshUserparamBuf();
             return;
         }
         if (//isSend != 1
             //&& !strSayTalker.endsWith("@chatroom") &&
-                !SayTalker.startsWith("gh_") && Robotsrv.Jusrpar != ""
+                !SayTalker.startsWith("gh_") && Robotsrv.Jusrpar() != ""
                 &&strContent.startsWith("*")==false
         ) {
             String Res = "*" + Robotsrv.MessageRobotDo(strContent, "安微", (SayconRemark == null || SayconRemark .equals( "" )? Saynickname : SayconRemark)
                     , FromPlayerName
                     , ToPlayerName, strcreateTime, msgType
-                    , false, Robotsrv.My_Wechatid, Robotsrv.Jusrpar
+                    , false, Robotsrv.My_Wechatid, Robotsrv.Jusrpar()
             );
             if (Res .equals( "*")==false) {
                 SendWXContentByID(loadPackageParam, SayTalker, SayencryptUserNmae, Res);

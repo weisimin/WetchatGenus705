@@ -17,6 +17,8 @@ import com.qmuiteam.qmui.util.QMUIStatusBarHelper;
 import com.qmuiteam.qmui.widget.QMUITopBar;
 import com.qmuiteam.qmui.widget.grouplist.QMUICommonListItemView;
 import com.qmuiteam.qmui.widget.grouplist.QMUIGroupListView;
+import com.qmuiteam.qmui.widget.popup.QMUIListPopup;
+import com.qmuiteam.qmui.widget.popup.QMUIPopup;
 
 import net.dalu2048.wechatgenius.entity.AppInfo;
 import net.dalu2048.wechatgenius.net.HttpRequest;
@@ -24,9 +26,11 @@ import net.dalu2048.wechatgenius.ui.user.LoginActivity;
 import net.dalu2048.wechatgenius.util.RegexUtils;
 
 import RobotWebService.Robotsrv;
+import RobotWebService.UserParam;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 
+import static android.icu.lang.UCharacter.GraphemeClusterBreak.V;
 import static net.dalu2048.wechatgenius.DBData.PrintTrack;
 
 public class MainActivity extends Activity {
@@ -62,7 +66,7 @@ public class MainActivity extends Activity {
         }).start();*/
 
     }
-    View RuningView=null;
+
     //初始化状态栏
     private void initTopBar() {
         mTopBar.setTitle(getResources().getString(R.string.activity_title_main));
@@ -105,35 +109,38 @@ public class MainActivity extends Activity {
                 .addItemView(listItemWechatVersion, null)
                 .addTo(mGroupListView);
         //endregion
-       /* QMUICommonListItemView listItemwechatmember = mGroupListView.createItemView("上传微信通讯录");
-        QMUICommonListItemView listItemrefresh = mGroupListView.createItemView("读取发图设置");
-        QMUIGroupListView.newSection(this)
+        QMUICommonListItemView listItem_memberlogout = mGroupListView.createItemView("退出");
+        QMUICommonListItemView listItem_membername = mGroupListView.createItemView("会员："+UserParam.GetUserparamBuf().UserName);
+        QMUICommonListItemView listItem_ServerURL = mGroupListView.createItemView("服务器："+Robotsrv.WebServiceUrl);
+           QMUIGroupListView.newSection(this)
                 .setTitle("会员设置")
-                .addItemView(listItemwechatmember, new View.OnClickListener() {
+                .addItemView(listItem_memberlogout, new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
-                        RuningView=v;
-                        new Thread(new Runnable(){
-                            @Override
-                            public void run() {
-                                OnClickUpload(RuningView);
-                            }
-                        }).start();
-                    }
-                })//additemview
-                .addItemView(listItemrefresh, new View.OnClickListener() {
-                    @Override
-                    public void onClick(View v) {
-                        RuningView=v;
-                        new Thread(new Runnable(){
-                            @Override
-                            public void run() {
+                                UserParam.CleanUserParamBuf();
+                                Robotsrv.CleanUsrPar();
+                        Looper.prepare();
+                        Toast.makeText(v.getContext(), "重启微信，或发\"刷新会员\"！", Toast.LENGTH_LONG).show();
+                        Looper.loop();
+                                Intent intent = new Intent(v.getContext(), LoginActivity.class);
+                                startActivity(intent);
 
-                            }
-                        }).start();
-                    }
+                    }//ONCLICK
                 })//additemview
-                .addTo(mGroupListView);*/
+                   .addItemView(listItem_membername, new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+
+
+                       }//ONCLICK
+                   })//additemview
+                   .addItemView(listItem_ServerURL, new View.OnClickListener() {
+                       @Override
+                       public void onClick(View v) {
+
+                       }
+                   })//additemview
+                .addTo(mGroupListView);
         //region Xposed框架状态
         //Xposed版本
         QMUICommonListItemView listItemXposed = mGroupListView.createItemView("Xposed版本");
@@ -160,7 +167,7 @@ public class MainActivity extends Activity {
             Toast.makeText(this, "数据库"+DBData.Finddbs.size(), Toast.LENGTH_LONG).show();
             Looper.loop();
             String jcontacts = DBData.OpenAndQuery("EnMicroMsg", "select username,nickname, conRemark  from rcontact ");
-            String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar,"安微");
+            String r = Robotsrv.UploadContacts(jcontacts, Robotsrv.Jusrpar(),"安微");
             Looper.prepare();
            //Toast.makeText(this, r, Toast.LENGTH_SHORT).show();
             Looper.loop();

@@ -92,7 +92,7 @@ public final class MainXposed implements IXposedHookLoadPackage {
         if (!lpparam.processName.equals(WECHAT_PROCESS_NAME)) {
             return;
         }
-        Robotsrv.Jusrpar = DBData.readFileData(Environment.getExternalStorageDirectory() + "/app.dat");
+        UserParam.RefreshUserparamBuf();
         // XposedBridge.log("进入微信进程：" + lpparam.processName);
         //调用 hook数据库插入。
         hookDatabaseInsert(lpparam);

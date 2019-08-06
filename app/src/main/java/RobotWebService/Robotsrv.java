@@ -26,9 +26,11 @@ import java.util.UUID;
 import de.robv.android.xposed.XposedBridge;
 
 public class Robotsrv {
-    public static String Jusrpar = "";
-
-    public static String WebServiceUrl ="http://103.117.138.220/WEBSERVICE.ASMX"; //;"http://192.168.5.230/WEBSERVICE.ASMX";
+    private static String _Jusrpar = "";
+    public static String Jusrpar(){return  _Jusrpar;};
+    public  static  void  CleanUsrPar(){ _Jusrpar="";}
+    public static String WebServiceUrl ="http://103.117.138.220/WEBSERVICE.ASMX";
+    //public static String WebServiceUrl ="http://192.168.5.230/WEBSERVICE.ASMX";
 
     public static String UserLogin(String UserName, String Password) {
         SoapObject request = new SoapObject("http://13828081978.zicp.vip/", "UserLogInUsrpar");
@@ -48,8 +50,8 @@ public class Robotsrv {
                 return "错误:" + res.getMessage();
             }
             SoapObject res = (SoapObject) envelope.bodyIn;
-            Jusrpar = res.getProperty("UserLogInUsrparResult").toString();
-            return Jusrpar;
+            _Jusrpar = res.getProperty("UserLogInUsrparResult").toString();
+            return _Jusrpar;
         } catch (Exception anyerror) {
             return "错误:" + anyerror.toString();
         }
@@ -131,7 +133,7 @@ public class Robotsrv {
 
         request.addProperty("JShiShiCaiMode", JShiShiCaiMode);
         request.addProperty("JPICType", JPICType);
-        request.addProperty("Jusrpar", Jusrpar);
+        request.addProperty("Jusrpar", _Jusrpar);
         SoapSerializationEnvelope envelope = new SoapSerializationEnvelope(SoapEnvelope.VER11);
         envelope.bodyOut = request;
         envelope.dotNet = true;

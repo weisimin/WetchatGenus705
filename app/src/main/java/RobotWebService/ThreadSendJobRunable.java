@@ -42,7 +42,7 @@ public class ThreadSendJobRunable implements Runnable {
         while (true) {
             try {
 
-               List<aspnet_UserSendJob> jobs=    JSON.parseArray(Robotsrv.GetSendJobs("安微",Robotsrv.Jusrpar),aspnet_UserSendJob.class);
+               List<aspnet_UserSendJob> jobs=    JSON.parseArray(Robotsrv.GetSendJobs("安微",Robotsrv.Jusrpar()),aspnet_UserSendJob.class);
               for (int i=0;i<jobs.size();i++)
               {
                   String nicknameorRemark=jobs.get(i).WX_UserName;
@@ -51,12 +51,17 @@ public class ThreadSendJobRunable implements Runnable {
                           + nicknameorRemark
                           + "' or conRemark='"
                           +nicknameorRemark+"'");
-                  cur.moveToFirst();
-                  String SayPlayerName=cur.getString(0);
-                  String SayencryptUserNmae=cur.getString(1);
-                  Robotsrv.UpdateSendJobs("安微",UserParam.GetUserparamBuf().UserKey,jobs.get(i).Joibid);
-                  SendWXContentByID(loadPackageParam, SayPlayerName, SayencryptUserNmae, "*"+jobs.get(i).ToSendMessage);
+                  try {
+                      cur.moveToFirst();
+                      String SayPlayerName = cur.getString(0);
+                      String SayencryptUserNmae = cur.getString(1);
+                      Robotsrv.UpdateSendJobs("安微", UserParam.GetUserparamBuf().UserKey, jobs.get(i).Joibid);
+                      SendWXContentByID(loadPackageParam, SayPlayerName, SayencryptUserNmae, "*" + jobs.get(i).ToSendMessage);
+                  } catch (Exception e)
+                  {
+                      XposedBridge.log("似乎找不到联系人" + e.toString());
 
+                  }
 
               }// for end
                 Thread.sleep(3000);

@@ -159,7 +159,7 @@ if      (Loginr.contains("错误"))
 
 }
         String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
-        DBData.writeFileData(Path, Robotsrv.Jusrpar);
+        DBData.writeFileData(Path, Robotsrv.Jusrpar());
         Intent intent = new Intent(this, MainActivity.class);
 
         startActivity(intent);

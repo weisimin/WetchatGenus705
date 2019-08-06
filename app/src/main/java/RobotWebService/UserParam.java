@@ -18,6 +18,7 @@ import com.alibaba.fastjson.JSON;
 
 import net.dalu2048.wechatgenius.DBData;
 
+import java.io.File;
 import java.util.UUID;
 
 public class UserParam {
@@ -33,27 +34,45 @@ public class UserParam {
 
     public String DataSourceName = "";
 
-    public static String MemberSourceode="";
+    public static String MemberSourceode = "";
 
-    public aspnet_UsersNewGameResultSend Membersetting =null;
+    public String WebServerURL="";
 
-    public static UserParam RefreshUserparamBuf()
-    {
-        UserParam bufs=GetUserparamBuf();
-        String Jusrpar=  Robotsrv.UserLogin(bufs.UserName,bufs.Password);
-        Robotsrv.Jusrpar=Jusrpar;
-        String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
-        DBData.writeFileData(Path, Robotsrv.Jusrpar);
-        return  GetUserparamBuf();
+    public aspnet_UsersNewGameResultSend Membersetting = null;
+
+    public static UserParam RefreshUserparamBuf() {
+        UserParam bufs = GetUserparamBuf();
+
+        Robotsrv.UserLogin(bufs.UserName, bufs.Password);
+
+        String Path = Environment.getExternalStorageDirectory() + "/app.dat";
+        DBData.writeFileData(Path, Robotsrv.Jusrpar());
+        return GetUserparamBuf();
     }
 
-    public static UserParam GetUserparamBuf()
+    public static UserParam GetUserparamBuf() {
+        UserParam param = null;
+        String Path = Environment.getExternalStorageDirectory() + "/app.dat";
+        String JSon = DBData.readFileData(Path);
+        param = JSON.parseObject(JSon, UserParam.class);
+        return param;
+    }
+    public  static  boolean CleanUserParamBuf()
     {
-        UserParam param=null;
-        String Path=  Environment.getExternalStorageDirectory()+"/app.dat";
-        String JSon= DBData.readFileData(Path);
-        param= JSON.parseObject(JSon,UserParam.class);
-        return  param;
+        String Path = Environment.getExternalStorageDirectory() + "/app.dat";
+
+        return  deleteFile(Path);
     }
 
+    public static boolean deleteFile(String pathname) {
+        boolean result = false;
+        File file = new File(pathname);
+        if (file.exists()) {
+            file.delete();
+            result = true;
+            System.out.println("文件已经被成功删除");
+        }
+        return result;
+    }
 }
+
